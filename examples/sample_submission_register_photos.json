@@ -1,0 +1,27 @@
+{
+  "_comment": "Example when your form uses a repeat group named register_photos_group and a photo field register_pic. Set appconfig.ini: attachment_repeat_group = register_photos_group, attachment_field = register_pic",
+  "SubmissionDate": "2025-07-01T15:07:53.416Z",
+  "username": "collector@example.org",
+  "member_name": "Example Collector",
+  "district": "ExampleDistrict",
+  "block": "ExampleBlock",
+  "health_centre_name": "Example PHC",
+  "health_centre_type": "phc",
+  "formdef_id": "example_form",
+  "KEY": "uuid:00000000-0000-0000-0000-000000000002",
+  "survey_signature": "collector@example.org_2025-07-01T15:07:53.416Z_example_form",
+  "register_photos_group": [
+    {
+      "register_pic": {
+        "filename": "capture-example-1.jpg",
+        "type": "image/jpeg"
+      }
+    },
+    {
+      "register_pic": {
+        "filename": "capture-example-2.jpg",
+        "type": "image/jpeg"
+      }
+    }
+  ]
+}

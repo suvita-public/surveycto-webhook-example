@@ -1,0 +1,9 @@
+﻿[webhook]
+path = /webhook/surveycto
+surveycto_attachment_base = https://your-server.surveycto.com/view/submission-attachment
+# Repeat group and attachment field names — must match your SurveyCTO form design
+attachment_repeat_group = attachments
+attachment_field = file
+
+[logging]
+log_file_path = logconfig.ini

@@ -1,0 +1,22 @@
+{
+  "_comment": "Minimal SurveyCTO webhook payload for THIS repo's default appconfig.ini (attachments + file). See examples/README.md for other form shapes.",
+  "SubmissionDate": "2025-07-01T15:07:53.416Z",
+  "username": "collector@example.org",
+  "formdef_id": "example_form",
+  "KEY": "uuid:00000000-0000-0000-0000-000000000001",
+  "survey_signature": "collector@example.org_2025-07-01T15:07:53.416Z_example_form",
+  "attachments": [
+    {
+      "file": {
+        "filename": "photo-1.jpg",
+        "type": "image/jpeg"
+      }
+    },
+    {
+      "file": {
+        "filename": "photo-2.jpg",
+        "type": "image/jpeg"
+      }
+    }
+  ]
+}
