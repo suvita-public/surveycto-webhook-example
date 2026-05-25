@@ -15,7 +15,7 @@ Screenshots below are from a SurveyCTO server console. Personal account details 
 
 ## Overview
 
-Webhooks allow web services to trigger actions, push data, or otherwise connect to other web services. Initially the exclusive domain of programmers who sought to use certain technologies and conventions to connect systems, webhooks are increasingly useful to non-programmers as well. You can use webhooks to publish incoming SurveyCTO form data to a wide variety of outside systems, but typically you will need some technical expertise and/or instructions from the receiving system in order to successfully configure everything.
+Webhooks are a way for web services to communicate with each other automatically — sending data or triggering actions the moment something happens. Once a niche tool for developers, they are now widely used across many platforms and tools. SurveyCTO supports webhooks as a way to push form submission data to external systems in real time. The range of systems you can connect to is broad, though you will generally need some technical knowledge or guidance from the receiving system to get everything configured correctly.
 
 ## What you need on your side
 
