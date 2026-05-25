@@ -1,4 +1,4 @@
-# SurveyCTO — Webhook Setup Guide
+# SurveyCTO Webhook Setup Guide
 
 > **<u>This document covers how to configure the webhook on the SurveyCTO side. If you are looking for how to build a REST API to receive SurveyCTO webhooks, see the [README](README.md).</u>**
 
