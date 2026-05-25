@@ -1,6 +1,6 @@
-# SurveyCTO — Publishing to other systems via webhooks
+# SurveyCTO — Webhook Setup Guide
 
-> **<u>This document covers how to configure the webhook on the SurveyCTO side. If you are looking for how to build and connect a REST API to receive SurveyCTO webhooks, see the [README](../README.md).</u>**
+> **<u>This document covers how to configure the webhook on the SurveyCTO side. If you are looking for how to build a REST API to receive SurveyCTO webhooks, see the [README](README.md).</u>**
 
 ---
 
@@ -15,7 +15,11 @@ Screenshots below are from a SurveyCTO server console. Personal account details 
 
 ## Overview
 
-Webhooks are a way for web services to communicate with each other automatically — sending data or triggering actions the moment something happens. Once a niche tool for developers, they are now widely used across many platforms and tools. SurveyCTO supports webhooks as a way to push form submission data to external systems in real time. The range of systems you can connect to is broad, though you will generally need some technical knowledge or guidance from the receiving system to get everything configured correctly.
+A webhook is a push notification for software. When a SurveyCTO form is submitted, SurveyCTO can immediately POST that submission's data as JSON to any URL you specify — no polling, no manual exports. The receiving end is typically a REST API endpoint: a URL that accepts HTTP POST requests and processes the data however it needs to, whether that's saving to a database, triggering an alert, updating a dashboard, or feeding into another workflow.
+
+This makes webhooks one of the most direct ways to get SurveyCTO data into another system the moment it arrives. The tradeoff is that the receiving end needs to be set up to accept and handle the request — which is what this guide, and the accompanying [README](README.md), are about.
+
+---
 
 ## What you need on your side
 
@@ -32,7 +36,7 @@ Webhooks are a way for web services to communicate with each other automatically
 
 Go to your server console's Export tab, scroll down to the Advanced: publishing form and dataset data to the cloud section, and click the ON/OFF toggle to ON if you haven't already enabled cloud publishing.
 
-![Export tab — enable Advanced cloud publishing](images/01-export-cloud-publishing-on.png)
+![Export tab — enable Advanced cloud publishing](docs/images/01-export-cloud-publishing-on.png)
 
 *Figure 1: Export → Advanced: publishing form and dataset data to the cloud → toggle ON.*
 
@@ -49,7 +53,7 @@ Before adding a webhook, make sure:
 
 To configure any one of your forms to publish via webhooks, click on the Configure option for that form, and then click Add Webhook in the panel that appears.
 
-![Form publishing options — Add Webhook](images/02-form-publishing-add-webhook.png)
+![Form publishing options — Add Webhook](docs/images/02-form-publishing-add-webhook.png)
 
 *Figure 2: Configure on a form → Form publishing options → + Add Webhook.*
 
@@ -74,7 +78,7 @@ Then select which form fields to publish:
 
 The JSON body will contain only the fields you select (plus any optional extras described below). If your receiver expects a field, you must select it here.
 
-![New webhook connection — name, URL, and fields](images/03-new-webhook-connection.png)
+![New webhook connection — name, URL, and fields](docs/images/03-new-webhook-connection.png)
 
 *Figure 3: New webhook connection — connection name, Webhook URL, and checkboxes for each field to publish.*
 
@@ -106,7 +110,7 @@ Submission received from ${enumerator_name}, for household headed by ${hh_head}
 
 Note that in encrypted forms, you can only reference publishable fields.
 
-![Webhook options — hyperlink, text summary, embed binary](images/04-webhook-options-text-summary.png)
+![Webhook options — hyperlink, text summary, embed binary](docs/images/04-webhook-options-text-summary.png)
 
 *Figure 4: Webhook options screen. Sensitive values are blurred — use your own element names and JSON text in production.*
 
@@ -251,4 +255,4 @@ curl -X POST http://localhost:8000/webhook/surveycto \
 |----------|------|
 | Official SurveyCTO page | [Publishing to other systems via webhooks](https://docs.surveycto.com/05-exporting-and-publishing-data/03-publishing-data-to-the-cloud/05.forms-to-webhooks.html) |
 | Cloud publishing overview | [Introduction to cloud publishing](https://docs.surveycto.com/05-exporting-and-publishing-data/03-publishing-data-to-the-cloud/) |
-| Example payloads | [`examples/README.md`](../examples/README.md) |
+| Example payloads | [`examples/README.md`](examples/README.md) |
