@@ -90,9 +90,9 @@ You have a few other options available when configuring the webhook.
 
 ### 1. Hyperlink to the full submission
 
-You can choose whether or not to include a hyperlink to the full submission in SurveyCTO in the published data.
+You can include a hyperlink to the full submission in SurveyCTO in the published data — or leave it out.
 
-If you do include the hyperlink and you also happen to be publishing a form field named `submission_url`, choose a different name for the hyperlink to avoid a naming conflict.
+If you include it and you're also publishing a form field named `submission_url`, pick a different name for the hyperlink to avoid a conflict.
 
 This link is useful if operators need to open the submission in SurveyCTO for review or correction.
 
@@ -120,7 +120,7 @@ Example of what a published payload might include:
 "submission_summary": "Received from collector@example.org on 2025-07-01T15:07:53.416Z"
 ```
 
-A note on security: treat any text-summary pattern as non-secret. Anyone receiving webhooks can see the values and reconstruct the string. Use HTTPS, network restrictions, and proper auth (API keys, HMAC, etc.) for real protection — not a custom summary field alone.
+Security note: the summary text is not a secret. Anyone who receives the webhook payload can see the field values in it. For real security, use HTTPS, network restrictions, and proper authentication (API keys, HMAC, etc.) — not a custom summary field.
 
 Also make sure to publish the underlying fields you reference (e.g. `username`, `SubmissionDate`, `KEY`) in the field list if your receiver needs them separately from the summary text.
 
@@ -185,6 +185,8 @@ Exact fields depend on your form and what you selected to publish. Receivers oft
 
 ### HTTP contract
 
+This is what SurveyCTO sends to your endpoint, and what it expects back:
+
 ```http
 POST /webhook/surveycto HTTP/1.1
 Host: your-server.example.org
@@ -202,7 +204,7 @@ Content-Type: application/json
 { "response": "Success" }
 ```
 
-Keep the handler fast. Move heavy steps (SQL, image download, external APIs) to a background job.
+Return the 200 quickly. Move any slow work — database writes, file downloads, external API calls — to a background job.
 
 ### Minimal sample payload
 

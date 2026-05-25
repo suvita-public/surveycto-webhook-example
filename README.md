@@ -153,8 +153,8 @@ Default repeat group / field names are `attachments` / `file`.
 surveycto-webhook-example/
   LICENSE
   README.md
+  SURVEYCTO-WEBHOOK-SETUP.md
   docs/
-    SurveyCTO-Publishing-to-other-systems-via-webhooks.md
     images/   # SurveyCTO console screenshots (redacted)
   requirements.txt
   examples/
