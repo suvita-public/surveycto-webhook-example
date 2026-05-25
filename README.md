@@ -24,7 +24,7 @@ Runnable FastAPI reference for receiving SurveyCTO webhook POSTs when a form is 
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/your-org/surveycto-webhook-example.git
+git clone https://github.com/suvita-public/surveycto-webhook-example.git
 cd surveycto-webhook-example
 ```
 
@@ -70,6 +70,8 @@ copy app\config\logconfig.ini.example app\config\logconfig.ini
 5. SurveyCTO expects a timely HTTP 200 response; keep processing efficient or move heavy work to a queue in production.
 
 See [SurveyCTO documentation](https://docs.surveycto.com/) for webhook configuration details on your server version.
+
+For a detailed companion guide (same structure as the official page, with receiver setup, `survey_signature`, files, and troubleshooting), see [`docs/SurveyCTO-Publishing-to-other-systems-via-webhooks.md`](docs/SurveyCTO-Publishing-to-other-systems-via-webhooks.md).
 
 ## Usage
 
@@ -151,6 +153,8 @@ Default repeat group / field names are `attachments` / `file`.
 surveycto-webhook-example/
   LICENSE
   README.md
+  docs/
+    SurveyCTO-Publishing-to-other-systems-via-webhooks.md
   requirements.txt
   examples/
     sample_submission.json
