@@ -15,9 +15,9 @@ Screenshots below are from a SurveyCTO server console. Personal account details 
 
 ## Overview
 
-A webhook is a push notification for software. When a SurveyCTO form is submitted, SurveyCTO can immediately POST that submission's data as JSON to any URL you specify — no polling, no manual exports. The receiving end is typically a REST API endpoint: a URL that accepts HTTP POST requests and processes the data however it needs to, whether that's saving to a database, triggering an alert, updating a dashboard, or feeding into another workflow.
+A webhook is a push notification for software. When a SurveyCTO form is submitted, SurveyCTO can immediately POST that submission's data as JSON to any URL you specify. No polling, no manual exports. The receiving end is typically a REST API endpoint: a URL that accepts HTTP POST requests and processes the data however it needs to, whether that's saving to a database, triggering an alert, updating a dashboard, or feeding into another workflow.
 
-This makes webhooks one of the most direct ways to get SurveyCTO data into another system the moment it arrives. The tradeoff is that the receiving end needs to be set up to accept and handle the request — which is what this guide, and the accompanying [README](README.md), are about.
+This makes webhooks one of the most direct ways to get SurveyCTO data into another system the moment it arrives. The tradeoff is that the receiving end needs to be set up to accept and handle the request, which is what this guide and the accompanying [README](README.md) are about.
 
 ---
 
@@ -90,7 +90,7 @@ You have a few other options available when configuring the webhook.
 
 ### 1. Hyperlink to the full submission
 
-You can include a hyperlink to the full submission in SurveyCTO in the published data — or leave it out.
+You can include a hyperlink to the full submission in SurveyCTO in the published data, or leave it out.
 
 If you include it and you're also publishing a form field named `submission_url`, pick a different name for the hyperlink to avoid a conflict.
 
@@ -100,7 +100,7 @@ This link is useful if operators need to open the submission in SurveyCTO for re
 
 ### 2. Extra summary field
 
-You can include one extra field as a text summary of the submission — useful as a title or alert text depending on the system you're publishing to.
+You can include one extra field as a text summary of the submission. This is useful as a title or alert text depending on the system you're publishing to.
 
 You choose the field's name and contents. In the contents, you can use `${fieldname}` references to pull in data from the submission, just like in a form label. For example:
 
@@ -132,7 +132,7 @@ You can choose to embed the contents of binary fields (files attached to submiss
 
 | Setting | What the webhook contains |
 |---------|---------------------------|
-| Embed OFF (default) | File fields publish as metadata and/or hyperlinks — not raw file bytes. |
+| Embed OFF (default) | File fields publish as metadata and/or hyperlinks, not raw file bytes. |
 | Embed ON | File contents are included in the payload (larger body, slower processing). |
 
 You can't embed binary fields for encrypted forms.
@@ -165,7 +165,7 @@ Check Publish existing data if you want to also publish existing form submission
 
 ## Publishing
 
-As submissions come in to the server, your selected fields will be automatically published to your chosen webhook — but there will be a brief delay of up to ten minutes.
+As submissions come in to the server, your selected fields will be automatically published to your chosen webhook. There will be a brief delay of up to ten minutes.
 
 - SurveyCTO sends an HTTP POST with JSON to your webhook URL.
 - Delivery is not instant; wait up to 10 minutes when testing.
@@ -204,7 +204,7 @@ Content-Type: application/json
 { "response": "Success" }
 ```
 
-Return the 200 quickly. Move any slow work — database writes, file downloads, external API calls — to a background job.
+Return the 200 quickly. Move any slow work (database writes, file downloads, external API calls) to a background job.
 
 ### Minimal sample payload
 
@@ -243,11 +243,11 @@ curl -X POST http://localhost:8000/webhook/surveycto \
 | Symptom | Things to check |
 |---------|-----------------|
 | No POST received | Cloud publishing ON; webhook on the correct form; URL is HTTPS and public; wait 10 minutes |
-| 400 from example app | Demo validation in code rejected the payload — adjust `webhook_service.py` or your text summary to match your setup |
+| 400 from example app | Demo validation in code rejected the payload. Adjust `webhook_service.py` or your text summary to match your setup |
 | Missing form fields | Field not selected in webhook config; encrypted field not marked publishable |
-| No files / only filenames | Embed binary is off — expected; use SurveyCTO URLs or APIs to fetch bytes |
+| No files / only filenames | Embed binary is off (expected). Use SurveyCTO URLs or APIs to fetch bytes |
 | Wrong attachment structure | `attachment_repeat_group` / `attachment_field` in `appconfig.ini` must match your form JSON keys |
-| Timeouts or errors on SurveyCTO side | Receiver too slow or returning 5xx — return 200 quickly and process async |
+| Timeouts or errors on SurveyCTO side | Receiver too slow or returning 5xx. Return 200 quickly and process async |
 
 ---
 

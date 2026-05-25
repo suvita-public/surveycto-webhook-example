@@ -119,7 +119,7 @@ from app.services.webhook_service import build_submission_dataframe
 df = build_submission_dataframe(payload_dict)
 ```
 
-Add your logic in `process_submission()` in `app/services/webhook_service.py` — it runs on every valid webhook.
+Add your logic in `process_submission()` in `app/services/webhook_service.py`. It runs on every valid webhook.
 
 ## Payload contract
 
