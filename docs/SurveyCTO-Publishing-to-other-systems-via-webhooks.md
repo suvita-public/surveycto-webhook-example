@@ -109,37 +109,38 @@ Submission received from ${enumerator_name}, for household headed by ${hh_head}
 
 (Note, however, that you can only reference **publishable** fields in encrypted forms.)
 
-#### Example: `survey_signature` via “Include text summary” (used in this repo)
+#### Example: optional text summary for your receiver (generic)
 
-SurveyCTO can add an **extra JSON field** built from `${fieldname}` references. You choose the **JSON element name** and the **JSON text** in the webhook screen — this is **not** a built-in SurveyCTO system field name; you pick the name (here: `survey_signature`).
+SurveyCTO can add an **extra JSON field** built from `${fieldname}` references. You choose the **JSON element name** and the **JSON text** in the webhook screen. These names are **yours to define** — they are not fixed SurveyCTO system fields.
 
 ![Webhook options — hyperlink, text summary, embed binary](images/04-webhook-options-text-summary.png)
 
-*Figure 4: Example settings aligned with [suvita-public/surveycto-webhook-example](https://github.com/suvita-public/surveycto-webhook-example):*
+*Figure 4: Webhook options screen. **Sensitive values in the form are blurred** — use your own element names and JSON text in production; do not copy values from public documentation.*
 
-| Option | Example setting |
-|--------|-----------------|
-| Include hyperlink to submission details? | **Checked** — JSON element name: `submission_url` |
-| Include text summary? | **Checked** — JSON element name: `survey_signature` |
-| JSON text | `${username}_${SubmissionDate}_${formdef_id}` |
+**Illustrative console settings (fictional — not a production recipe):**
+
+| Option | Example only |
+|--------|----------------|
+| Include hyperlink to submission details? | **Checked** — JSON element name: e.g. `submission_link` |
+| Include text summary? | **Checked** — JSON element name: e.g. `submission_summary` |
+| JSON text | e.g. `Received from ${username} on ${SubmissionDate}` |
 | Embed binary fields? | **Unchecked** (files publish as metadata/hyperlinks) |
 
-SurveyCTO substitutes `${username}`, `${SubmissionDate}`, and `${formdef_id}` when the webhook fires. The published JSON can look like:
+SurveyCTO substitutes `${fieldname}` tokens when the webhook fires. A published payload might include:
 
 ```json
-"survey_signature": "collector@example.org_2025-07-01T15:07:53.416Z_example_form"
+"submission_summary": "Received from collector@example.org on 2025-07-01T15:07:53.416Z"
 ```
 
-**What the example receiver checks** (`app/services/webhook_service.py`): it rebuilds `{username}_{SubmissionDate}_{formdef_id}` and compares it to `survey_signature`. If they do not match, the request is rejected with HTTP 400.
+**Security — important**
 
-This is a **simple integrity check** for demos or low-risk workflows. It is **not** a substitute for proper authentication (API keys, HMAC, IP allow lists, etc.) on production systems.
+- Treat any text-summary pattern as **non-secret**. Anyone who receives webhooks can see usernames, dates, and field values and can often **reconstruct** the same string.
+- **Do not** publish your real JSON element name, `${...}` formula, or validation logic in public docs, screenshots, or repos if you rely on it operationally.
+- Use **HTTPS**, **network restrictions**, and **proper auth** (API keys, HMAC, etc.) for real protection — not a custom summary field alone.
 
-**Also publish** `username`, `SubmissionDate`, `formdef_id`, and `KEY` in the field list (Figure 3) so your server can use them independently of the summary string.
+**This open-source example app** includes optional payload checks in `app/services/webhook_service.py` for **local demos and tests**. Configure your **own** field names and rules in your deployment; see the code and [`examples/sample_submission.json`](../examples/sample_submission.json) only in a private or sanitized environment.
 
-**Alternative:** you can use the same pattern in a **calculate** field inside the form and publish that field instead of (or in addition to) the text summary — as long as the JSON key and value format match what your receiver expects.
-
-- Sample payload: [`examples/sample_submission.json`](../examples/sample_submission.json)
-- Validation: `app/services/webhook_service.py` → `_validate_survey_signature()`
+**Also publish** the underlying fields you reference (e.g. `username`, `SubmissionDate`, `KEY`) in the field list (Figure 3) if your receiver needs them separately from the summary text.
 
 ---
 
@@ -211,7 +212,7 @@ Exact fields depend on your form and what you selected to publish. Receivers oft
 | `SubmissionDate` | ISO timestamp of submission |
 | `formdef_id` | Form version identifier |
 
-Plus any form fields you selected (text, selects, repeats, files, and custom calculate fields such as `survey_signature`).
+Plus any form fields you selected (text, selects, repeats, files, and any extra summary field you configured).
 
 ---
 
@@ -250,14 +251,14 @@ See `examples/sample_submission.json` in this repository. Illustrative shape:
   "username": "collector@example.org",
   "formdef_id": "example_form",
   "KEY": "uuid:00000000-0000-0000-0000-000000000001",
-  "survey_signature": "collector@example.org_2025-07-01T15:07:53.416Z_example_form",
+  "submission_summary": "Received from collector@example.org on 2025-07-01T15:07:53.416Z",
   "attachments": [
     { "file": { "filename": "photo-1.jpg", "type": "image/jpeg" } }
   ]
 }
 ```
 
-`survey_signature` appears only if you added and published that calculate field in your form.
+Extra summary fields appear only if you enabled **Include text summary** and set a JSON element name in the webhook options.
 
 ### Local testing (this repo)
 
@@ -279,7 +280,7 @@ curl -X POST http://localhost:8000/webhook/surveycto \
 | Symptom | Things to check |
 |---------|------------------|
 | No POST received | Cloud publishing **ON**; webhook on the **correct form**; URL is **HTTPS** and public; wait **10 minutes** |
-| 400 from example app | `survey_signature` mismatch — text summary must be `${username}_${SubmissionDate}_${formdef_id}` (same as Figure 4) or disable validation in code |
+| 400 from example app | Optional demo validation in code rejected the payload — adjust `webhook_service.py` or your SurveyCTO text summary to match **your** private setup |
 | Missing form fields | Field not selected in webhook config; encrypted field not **publishable** |
 | No files / only filenames | **Embed binary** is off — expected; use SurveyCTO URLs or APIs to fetch bytes |
 | Wrong attachment structure | `attachment_repeat_group` / `attachment_field` in `appconfig.ini` must match **your** form JSON keys |

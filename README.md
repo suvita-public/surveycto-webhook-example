@@ -71,7 +71,7 @@ copy app\config\logconfig.ini.example app\config\logconfig.ini
 
 See [SurveyCTO documentation](https://docs.surveycto.com/) for webhook configuration details on your server version.
 
-For a detailed companion guide (same structure as the official page, with receiver setup, `survey_signature`, files, and troubleshooting), see [`docs/SurveyCTO-Publishing-to-other-systems-via-webhooks.md`](docs/SurveyCTO-Publishing-to-other-systems-via-webhooks.md).
+For a detailed companion guide (same structure as the official page, with console screenshots and webhook setup), see [`docs/SurveyCTO-Publishing-to-other-systems-via-webhooks.md`](docs/SurveyCTO-Publishing-to-other-systems-via-webhooks.md).
 
 ## Usage
 
