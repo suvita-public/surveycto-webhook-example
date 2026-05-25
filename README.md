@@ -155,6 +155,7 @@ surveycto-webhook-example/
   README.md
   docs/
     SurveyCTO-Publishing-to-other-systems-via-webhooks.md
+    images/   # SurveyCTO console screenshots (redacted)
   requirements.txt
   examples/
     sample_submission.json

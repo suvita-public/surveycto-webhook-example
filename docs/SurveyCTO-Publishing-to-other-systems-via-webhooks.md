@@ -6,6 +6,8 @@
 > It keeps the **same section order** as the official documentation and adds practical detail for people building a webhook receiver.  
 > It is **not** official SurveyCTO documentation. For authoritative product behavior, use SurveyCTO’s docs and support.
 
+**Screenshots** below are from a SurveyCTO server console. Personal account details (email, notification counts) have been **redacted** for publication.
+
 ---
 
 ## Overview
@@ -29,6 +31,10 @@ You can use webhooks to publish incoming SurveyCTO form data to a wide variety o
 
 You can get started by going to your server console's **Export** tab, scrolling down to the **Advanced: publishing form and dataset data to the cloud** section, and clicking the **ON/OFF** toggle to **ON** if you haven't already enabled cloud publishing.
 
+![Export tab — enable Advanced cloud publishing](images/01-export-cloud-publishing-on.png)
+
+*Figure 1: **4. Export** → **Advanced: publishing form and dataset data to the cloud** → toggle **ON**.*
+
 ### Checklist before adding a webhook
 
 - [ ] Cloud publishing is **ON**
@@ -41,6 +47,10 @@ You can get started by going to your server console's **Export** tab, scrolling 
 ## Configure a webhook for a form
 
 To configure any one of your forms to publish via webhooks, click on the **Configure** option for that form, and then click **Add Webhook** in the panel that appears.
+
+![Form publishing options — Add Webhook](images/02-form-publishing-add-webhook.png)
+
+*Figure 2: **Configure** on a form → **Form publishing options** → **+ Add Webhook**. (Other connections such as Google Sheets or Zapier may already exist on your server.)*
 
 ### Webhook URL
 
@@ -63,6 +73,10 @@ After that, you'll need to select exactly which **form fields** to publish:
 
 **Important:** The JSON body contains **only the fields you select** (plus any optional extras described below). If your receiver expects a field, you must publish it in this step.
 
+![New webhook connection — name, URL, and fields](images/03-new-webhook-connection.png)
+
+*Figure 3: **New webhook connection** — connection name, **Webhook URL**, and checkboxes for each field to publish. Use **Select all** if you want every listed field. Scroll the list for more fields (`KEY`, `username`, `formdef_id`, form questions, etc.).*
+
 ---
 
 ## Other options
@@ -76,6 +90,8 @@ You can choose whether or not to include a **hyperlink to the full submission** 
 - If you do include the hyperlink, and you happen to also be publishing a form field named `submission_url`, **choose a different name** for the hyperlink to avoid a naming conflict.
 
 **Receiver tip:** Store this link if operators need to open the submission in SurveyCTO for review or correction.
+
+In the console you set **JSON element name for hyperlink** (for example `submission_url`).
 
 ---
 
@@ -93,37 +109,37 @@ Submission received from ${enumerator_name}, for household headed by ${hh_head}
 
 (Note, however, that you can only reference **publishable** fields in encrypted forms.)
 
-#### Example: `survey_signature` for basic verification (used in this repo)
+#### Example: `survey_signature` via “Include text summary” (used in this repo)
 
-Some integrations add a **calculate** field in the form and publish it so the receiving server can check the payload was built from consistent metadata. This is **not** a built-in SurveyCTO system field — you create and name it in your form like any other field.
+SurveyCTO can add an **extra JSON field** built from `${fieldname}` references. You choose the **JSON element name** and the **JSON text** in the webhook screen — this is **not** a built-in SurveyCTO system field name; you pick the name (here: `survey_signature`).
 
-**Step 1 — Add a calculate field in your form design** (example name: `survey_signature`):
+![Webhook options — hyperlink, text summary, embed binary](images/04-webhook-options-text-summary.png)
 
-```text
-concat(${username}, "_", ${SubmissionDate}, "_", ${formdef_id})
-```
+*Figure 4: Example settings aligned with [suvita-public/surveycto-webhook-example](https://github.com/suvita-public/surveycto-webhook-example):*
 
-**Step 2 — Publish that field** in the webhook field list (along with `username`, `SubmissionDate`, `formdef_id`, `KEY`, and any other fields you need).
+| Option | Example setting |
+|--------|-----------------|
+| Include hyperlink to submission details? | **Checked** — JSON element name: `submission_url` |
+| Include text summary? | **Checked** — JSON element name: `survey_signature` |
+| JSON text | `${username}_${SubmissionDate}_${formdef_id}` |
+| Embed binary fields? | **Unchecked** (files publish as metadata/hyperlinks) |
 
-**Step 3 — What appears in the webhook JSON** (example):
+SurveyCTO substitutes `${username}`, `${SubmissionDate}`, and `${formdef_id}` when the webhook fires. The published JSON can look like:
 
 ```json
 "survey_signature": "collector@example.org_2025-07-01T15:07:53.416Z_example_form"
 ```
 
-**Step 4 — What the receiver checks**
+**What the example receiver checks** (`app/services/webhook_service.py`): it rebuilds `{username}_{SubmissionDate}_{formdef_id}` and compares it to `survey_signature`. If they do not match, the request is rejected with HTTP 400.
 
-The receiver rebuilds the same string from `username`, `SubmissionDate`, and `formdef_id` and compares it to `survey_signature`. If they do not match, the request can be rejected.
+This is a **simple integrity check** for demos or low-risk workflows. It is **not** a substitute for proper authentication (API keys, HMAC, IP allow lists, etc.) on production systems.
 
-This is a **simple integrity check** for demo or low-risk workflows. It is **not** a substitute for proper authentication (API keys, HMAC, IP allow lists, etc.) on production systems.
+**Also publish** `username`, `SubmissionDate`, `formdef_id`, and `KEY` in the field list (Figure 3) so your server can use them independently of the summary string.
 
-**Open-source example** that implements this pattern:
+**Alternative:** you can use the same pattern in a **calculate** field inside the form and publish that field instead of (or in addition to) the text summary — as long as the JSON key and value format match what your receiver expects.
 
-- Repository: [suvita-public/surveycto-webhook-example](https://github.com/suvita-public/surveycto-webhook-example)
-- Validation code: `app/services/webhook_service.py` → `_validate_survey_signature()`
-- Sample payload: `examples/sample_submission.json`
-
-You can use the extra summary field for human-readable text **or** publish a separate calculate field like `survey_signature` — they are different console options, but both end up as extra keys in the JSON your server receives.
+- Sample payload: [`examples/sample_submission.json`](../examples/sample_submission.json)
+- Validation: `app/services/webhook_service.py` → `_validate_survey_signature()`
 
 ---
 
@@ -263,7 +279,7 @@ curl -X POST http://localhost:8000/webhook/surveycto \
 | Symptom | Things to check |
 |---------|------------------|
 | No POST received | Cloud publishing **ON**; webhook on the **correct form**; URL is **HTTPS** and public; wait **10 minutes** |
-| 400 from example app | `survey_signature` mismatch — form calculate must match `concat(${username}, "_", ${SubmissionDate}, "_", ${formdef_id})` or disable validation in code |
+| 400 from example app | `survey_signature` mismatch — text summary must be `${username}_${SubmissionDate}_${formdef_id}` (same as Figure 4) or disable validation in code |
 | Missing form fields | Field not selected in webhook config; encrypted field not **publishable** |
 | No files / only filenames | **Embed binary** is off — expected; use SurveyCTO URLs or APIs to fetch bytes |
 | Wrong attachment structure | `attachment_repeat_group` / `attachment_field` in `appconfig.ini` must match **your** form JSON keys |
